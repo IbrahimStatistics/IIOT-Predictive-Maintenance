@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# VS Code
+.vscode/
+
+# Node.js
+node_modules/
+
+# Logs
+*.log
+
+# Data (don't upload huge datasets)
+*.h5
+*.hdf5
+*.parquet
+*.zip
+*.tar.gz
+
+# ML Models
+*.pt
+*.pth
+*.pkl
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Large datasets
+5.Dataset/
+
+# Python virtual environment
+6.Code/Python/.venv/
+
+# Notebook checkpoints
+**/.ipynb_checkpoints/
