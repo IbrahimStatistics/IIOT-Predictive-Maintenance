@@ -1,18 +1,15 @@
 import argparse
 import json
+import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-import h5py
 import numpy as np
 import paho.mqtt.client as mqtt
 
-# --- Import your existing loader ---
-# Adjust this path/import to match wherever loader.py actually lives
-import sys
-sys.path.append(str(Path(__file__).resolve().parent.parent / "Loader"))
-from loader import load_signal  # your existing function
+sys.path.append(str(Path(__file__).resolve().parent.parent / "loader"))
+from loader import load_signal
 
 RECORDING_DURATION_SECONDS = 18
 CURRENT_CHANNELS = ["Ia", "Ib", "Ic"]
@@ -36,10 +33,9 @@ def run_simulator(health_condition, torque_level, device_id,
                    factory_id, line_id, machine_id,
                    window_duration_s=1.0, speed=1.0):
 
-    client = mqtt.Client()
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     client.connect(MQTT_BROKER, MQTT_PORT)
 
-    # Load full 18s signals for each channel once, up front
     current_signals = {
         ch: load_signal(health_condition, torque_level, ch) for ch in CURRENT_CHANNELS
     }
@@ -58,7 +54,6 @@ def run_simulator(health_condition, torque_level, device_id,
     for w in range(num_windows):
         timestamp = datetime.now(timezone.utc).isoformat()
 
-        # --- Current payload ---
         current_payload = {
             "device_id": device_id,
             "timestamp": timestamp,
@@ -71,10 +66,8 @@ def run_simulator(health_condition, torque_level, device_id,
             "health_condition_sim": health_condition,
             "torque_level_sim": torque_level,
         }
-        current_topic = build_topic(factory_id, line_id, machine_id, "current")
-        client.publish(current_topic, json.dumps(current_payload))
+        client.publish(build_topic(factory_id, line_id, machine_id, "current"), json.dumps(current_payload))
 
-        # --- Vibration payload ---
         vibration_payload = {
             "device_id": device_id,
             "timestamp": timestamp,
@@ -87,11 +80,9 @@ def run_simulator(health_condition, torque_level, device_id,
             "health_condition_sim": health_condition,
             "torque_level_sim": torque_level,
         }
-        vibration_topic = build_topic(factory_id, line_id, machine_id, "vibration")
-        client.publish(vibration_topic, json.dumps(vibration_payload))
+        client.publish(build_topic(factory_id, line_id, machine_id, "vibration"), json.dumps(vibration_payload))
 
         print(f"  Window {w+1}/{num_windows} published at {timestamp}")
-
         time.sleep(window_duration_s / speed)
 
     client.disconnect()
@@ -100,14 +91,14 @@ def run_simulator(health_condition, torque_level, device_id,
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="SmartWatch telemetry simulator")
-    parser.add_argument("--health", default="rs", help="Health condition: rs, r1b, r2b, r3b, r4b")
-    parser.add_argument("--torque", default="torque05", help="Torque level: torque05..torque40")
+    parser.add_argument("--health", default="rs")
+    parser.add_argument("--torque", default="torque05")
     parser.add_argument("--device-id", default="sim-motor-01")
     parser.add_argument("--factory", default="factory1")
     parser.add_argument("--line", default="line1")
     parser.add_argument("--machine", default="motorA")
-    parser.add_argument("--window-ms", type=float, default=1000, help="Window duration in ms")
-    parser.add_argument("--speed", type=float, default=1.0, help="Playback speed multiplier")
+    parser.add_argument("--window-ms", type=float, default=1000)
+    parser.add_argument("--speed", type=float, default=1.0)
     args = parser.parse_args()
 
     run_simulator(
