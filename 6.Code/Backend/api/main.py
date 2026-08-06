@@ -41,11 +41,11 @@ async def health():
 
 @app.post("/auth/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    if not authenticate_user(form_data.username, form_data.password):
+    user = await authenticate_user(form_data.username, form_data.password)
+    if user is None:
         raise HTTPException(status_code=401, detail="Incorrect username or password")
-    token = create_access_token(form_data.username)
+    token = create_access_token(user["username"], user["role"])
     return {"access_token": token, "token_type": "bearer"}
-
 
 # --- Machines ---
 
