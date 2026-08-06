@@ -50,23 +50,28 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 # --- Machines ---
 
 @app.get("/machines")
-async def list_machines(user: str = Depends(get_current_user)):
-    pool = db.get_pool()
-    rows = await pool.fetch(
-        """
-        SELECT machine_id,
-               max(time) AS last_seen,
-               count(*) AS window_count
-        FROM (
-            SELECT machine_id, time FROM telemetry_current
-            UNION ALL
-            SELECT machine_id, time FROM telemetry_vibration
-        ) combined
-        GROUP BY machine_id
-        ORDER BY machine_id
-        """
-    )
-    return [dict(r) for r in rows]
+async def list_machines(user: dict = Depends(get_current_user)):
+    ...
+
+@app.get("/telemetry/current")
+async def get_current_telemetry(
+    machine_id: Optional[str] = None,
+    start: Optional[datetime] = None,
+    end: Optional[datetime] = None,
+    limit: int = 100,
+    user: dict = Depends(get_current_user),
+):
+    ...
+
+@app.get("/telemetry/vibration")
+async def get_vibration_telemetry(
+    machine_id: Optional[str] = None,
+    start: Optional[datetime] = None,
+    end: Optional[datetime] = None,
+    limit: int = 100,
+    user: dict = Depends(get_current_user),
+):
+    ...
 
 
 # --- Telemetry ---
