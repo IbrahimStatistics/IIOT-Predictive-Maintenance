@@ -2,6 +2,7 @@ from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 import jwt
+import secrets
 
 from config import JWT_SECRET, JWT_ALGORITHM, JWT_EXPIRY_MINUTES
 
@@ -18,7 +19,9 @@ def create_access_token(username: str) -> str:
 
 
 def authenticate_user(username: str, password: str) -> bool:
-    return username == FAKE_USER["username"] and password == FAKE_USER["password"]
+    username_ok = secrets.compare_digest(username, FAKE_USER["username"])
+    password_ok = secrets.compare_digest(password, FAKE_USER["password"])
+    return username_ok and password_ok
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> str:
