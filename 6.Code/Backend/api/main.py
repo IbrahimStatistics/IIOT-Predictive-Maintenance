@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 
@@ -9,6 +10,16 @@ import db
 from auth import authenticate_user, create_access_token, get_current_user
 
 app = FastAPI(title="SmartWatch Manager API")
+
+# TEMPORARY: wide open for local dev. Tighten allow_origins to your actual
+# dashboard URL before anything resembling a real deployment.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.on_event("startup")
@@ -60,6 +71,9 @@ async def list_machines(user: str = Depends(get_current_user)):
 
 # --- Telemetry ---
 
+MAX_TELEMETRY_LIMIT = 1000
+
+
 class TelemetryQuery(BaseModel):
     machine_id: Optional[str] = None
     start: Optional[datetime] = None
@@ -86,8 +100,9 @@ def build_telemetry_query(table: str, q: TelemetryQuery):
         idx += 1
 
     where_clause = f"WHERE {' AND '.join(conditions)}" if conditions else ""
+    safe_limit = min(max(q.limit, 1), MAX_TELEMETRY_LIMIT)
     query = f"SELECT * FROM {table} {where_clause} ORDER BY time DESC LIMIT ${idx}"
-    params.append(q.limit)
+    params.append(safe_limit)
     return query, params
 
 
