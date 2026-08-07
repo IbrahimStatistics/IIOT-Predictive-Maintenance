@@ -8,13 +8,13 @@
 SmartWatch Manager's backend is built as a chain of independent, single-purpose components that pass data through well-defined interfaces (MQTT topics, a JSON schema, a database schema, a REST API). This document explains each script, what it's responsible for, and exactly how data flows between them.
 
 ```
-┌──────────────┐    ┌──────────────────┐    ┌─────────┐    ┌──────────────┐    ┌───────────────┐    ┌─────────┐
-│ MAFAULDA     │───▶│ loader.py        │───▶│ sensor_ │───▶│ Mosquitto    │───▶│ consumer.py    │───▶│ Timescale│
-│ dataset      │    │ (extraction)     │    │simulator│    │ (MQTT broker)│    │ (async writer) │    │ DB       │
-│ (.mat files) │    │                  │    │  .py    │    │              │    │                │    │          │
-└──────────────┘    └──────────────────┘    └─────────┘    └──────────────┘    └────────────────┘    └────┬────┘
-                                                                                                             │
-                                                                                                             ▼
+┌──────────────┐    ┌──────────────────┐    ┌─────────┐    ┌──────────────┐    ┌────────────────┐    ┌───────────┐
+│ MAFAULDA     │───▶│ loader.py        │───▶│ sensor_ │───▶│ Mosquitto    │───▶│ consumer.py    │───▶│ Timescale │
+│ dataset      │    │ (extraction)     │    │simulator│    │ (MQTT broker)│    │ (async writer) │    │ DB        │
+│ (.mat files) │    │                  │    │  .py    │    │              │    │                │    │           │ 
+└──────────────┘    └──────────────────┘    └─────────┘    └──────────────┘    └────────────────┘    └────┬──────┘
+                                                                                                          │
+                                                                                                          ▼
                                                                                                      ┌────────────┐
                                                                                                      │  main.py   │
                                                                                                      │ (FastAPI)  │
