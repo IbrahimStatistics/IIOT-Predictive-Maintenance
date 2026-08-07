@@ -1,0 +1,23 @@
+# SmartWatch Manager — Backend dependencies
+# Install with: pip install -r requirements.txt --break-system-packages
+# (drop --break-system-packages if you're using a virtualenv, which is recommended)
+
+# --- API (FastAPI backend) ---
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20      # required by FastAPI's OAuth2PasswordRequestForm, not directly imported
+pydantic==2.10.4
+asyncpg==0.30.0
+PyJWT==2.10.1
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1                 # pinned: passlib is incompatible with bcrypt>=4.1 (see auth notes below)
+
+# --- MQTT consumer (ingestion pipeline) ---
+aiomqtt==2.3.0
+
+# --- Sensor simulator ---
+paho-mqtt==2.1.0
+numpy>=1.26          # unpinned upper bound: numpy==2.2.1 has no prebuilt Windows wheel for very new Python versions and fails to build from source without a modern GCC (>=8.4). Let pip pick a compatible version instead.
+
+# --- Dataset loader (MAFAULDA/.mat file parsing) ---
+h5py==3.12.1
