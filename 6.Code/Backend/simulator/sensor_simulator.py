@@ -18,6 +18,11 @@ VIBRATION_CHANNELS = ["Vib_axial", "Vib_base", "Vib_carc", "Vib_acpe", "Vib_acpi
 MQTT_BROKER = "localhost"
 MQTT_PORT = 1883
 
+def preview(arr, n=4):
+    """Return a short string preview of an array's first n values plus basic stats."""
+    a = np.asarray(arr)
+    head = ", ".join(f"{v:.4f}" for v in a[:n])
+    return f"[{head}, ...] (n={len(a)}, min={a.min():.3f}, max={a.max():.3f}, mean={a.mean():.4f})"
 
 def build_topic(factory_id, line_id, machine_id, sensor_group):
     return f"smartwatch/{factory_id}/{line_id}/{machine_id}/{sensor_group}"
@@ -66,6 +71,10 @@ def run_simulator(health_condition, torque_level, device_id,
             "health_condition_sim": health_condition,
             "torque_level_sim": torque_level,
         }
+
+        print(f"  Window {w+1}/{num_windows} | {timestamp}")
+        print(f"    Ia:        {preview(current_payload['channels']['Ia'])}")
+
         client.publish(build_topic(factory_id, line_id, machine_id, "current"), json.dumps(current_payload))
 
         vibration_payload = {
@@ -80,6 +89,8 @@ def run_simulator(health_condition, torque_level, device_id,
             "health_condition_sim": health_condition,
             "torque_level_sim": torque_level,
         }
+        print(f"    Vib_axial: {preview(vibration_payload['channels']['Vib_axial'])}")
+
         client.publish(build_topic(factory_id, line_id, machine_id, "vibration"), json.dumps(vibration_payload))
 
         print(f"  Window {w+1}/{num_windows} published at {timestamp}")

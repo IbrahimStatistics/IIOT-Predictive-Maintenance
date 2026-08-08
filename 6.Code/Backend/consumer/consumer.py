@@ -53,6 +53,9 @@ def validate_payload(payload: dict, expected_channels: list[str]) -> bool:
 async def insert_current(pool: asyncpg.Pool, machine_id: str, payload: dict):
     ch = payload["channels"]
 
+    print(f"    -> Ia sample: {ch['Ia'][:4]} ... (n={len(ch['Ia'])}, "
+          f"min={min(ch['Ia']):.3f}, max={max(ch['Ia']):.3f})")
+
     await pool.execute(
         """
         INSERT INTO telemetry_current
@@ -73,6 +76,9 @@ async def insert_current(pool: asyncpg.Pool, machine_id: str, payload: dict):
 
 async def insert_vibration(pool: asyncpg.Pool, machine_id: str, payload: dict):
     ch = payload["channels"]
+
+    print(f"    -> Vib_axial sample: {ch['Vib_axial'][:4]} ... (n={len(ch['Vib_axial'])}, "
+          f"min={min(ch['Vib_axial']):.3f}, max={max(ch['Vib_axial']):.3f})")
 
     await pool.execute(
         """

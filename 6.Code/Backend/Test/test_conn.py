@@ -1,7 +1,7 @@
 import asyncio
 import asyncpg
 
-DB_DSN = "postgresql://postgres:yourpassword@localhost:5432/postgres"
+DB_DSN = "postgresql://postgres:postgres@localhost:5432/postgres"
 
 async def main():
     conn = await asyncpg.connect(DB_DSN)
