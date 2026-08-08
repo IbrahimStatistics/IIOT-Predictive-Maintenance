@@ -77,7 +77,7 @@ def channel_category(channel: str) -> str:
         raise ValueError(f"Unknown channel: {channel}")
 
 
-# Quick self-test when run directly
+# Test
 if __name__ == "__main__":
     test_channels = ['Ia', 'Vib_axial', 'Vib_base', 'Ic']
 
