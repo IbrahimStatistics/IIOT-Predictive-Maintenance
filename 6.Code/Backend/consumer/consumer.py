@@ -16,7 +16,7 @@ MQTT_PORT = 1883
 TOPIC_CURRENT = "smartwatch/+/+/+/current"
 TOPIC_VIBRATION = "smartwatch/+/+/+/vibration"
 
-DB_DSN = "postgresql://postgres:yourpassword@localhost:5433/postgres"
+DB_DSN = "postgresql://postgres:postgres@localhost:5433/postgres"
 
 CURRENT_CHANNELS = ["Ia", "Ib", "Ic"]
 VIBRATION_CHANNELS = [
