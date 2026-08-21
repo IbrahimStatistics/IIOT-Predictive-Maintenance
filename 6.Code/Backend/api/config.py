@@ -1,6 +1,6 @@
 import os
 
-DB_DSN = os.environ.get("DB_DSN", "postgresql://postgres:postgres@localhost:5433/postgres")
+DB_DSN = os.environ.get("DB_DSN", "postgresql://postgres:postgres@localhost:5433/iiot")
 
 JWT_SECRET = os.environ.get("JWT_SECRET", "dev-secret-change-this")
 if JWT_SECRET == "dev-secret-change-this":

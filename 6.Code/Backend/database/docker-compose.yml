@@ -5,8 +5,8 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: yourpassword   # match this to DB_DSN in api/config.py / consumer.py
-      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: postgres   # match this to DB_DSN in api/config.py / consumer.py
+      POSTGRES_DB: iiot
     ports:
       - "5433:5432"   # host:container — 5433 avoids clashing with a native Postgres install on 5432
     volumes:
