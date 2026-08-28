@@ -1,0 +1,5 @@
+/* Minimal reset — real styling lives in theme.css */
+:root { color-scheme: light; }
+body { margin: 0; }
+button { font-family: inherit; }
+input { font-family: inherit; }

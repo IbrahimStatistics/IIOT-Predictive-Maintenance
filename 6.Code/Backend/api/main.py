@@ -134,3 +134,74 @@ async def get_vibration_telemetry(
     pool = db.get_pool()
     rows = await pool.fetch(query, *params)
     return [dict(r) for r in rows]
+
+def build_summary_query(table: str, channels: list[str], q: TelemetryQuery):
+    conditions = []
+    params = []
+    idx = 1
+
+    if q.machine_id:
+        conditions.append(f"machine_id = ${idx}")
+        params.append(q.machine_id)
+        idx += 1
+    if q.start:
+        conditions.append(f"time >= ${idx}")
+        params.append(q.start)
+        idx += 1
+    if q.end:
+        conditions.append(f"time <= ${idx}")
+        params.append(q.end)
+        idx += 1
+
+    where_clause = f"WHERE {' AND '.join(conditions)}" if conditions else ""
+    safe_limit = min(max(q.limit, 1), MAX_TELEMETRY_LIMIT)
+
+    rms_cols = ",\n        ".join(
+        f'sqrt((SELECT avg(v*v) FROM unnest("{ch}") AS v)) AS {ch.lower()}_rms'
+        for ch in channels
+    )
+
+    query = f"""
+        SELECT machine_id, time,
+        {rms_cols}
+        FROM {table}
+        {where_clause}
+        ORDER BY time DESC
+        LIMIT ${idx}
+    """
+    params.append(safe_limit)
+    return query, params
+
+
+@app.get("/telemetry/current/summary")
+async def get_current_summary(
+    machine_id: Optional[str] = None,
+    start: Optional[datetime] = None,
+    end: Optional[datetime] = None,
+    limit: int = 100,
+    user: dict = Depends(get_current_user),
+):
+    q = TelemetryQuery(machine_id=machine_id, start=start, end=end, limit=limit)
+    query, params = build_summary_query("telemetry_current", ["Ia", "Ib", "Ic"], q)
+    pool = db.get_pool()
+    rows = await pool.fetch(query, *params)
+    return [dict(r) for r in rows]
+
+
+@app.get("/telemetry/vibration/summary")
+async def get_vibration_summary(
+    machine_id: Optional[str] = None,
+    start: Optional[datetime] = None,
+    end: Optional[datetime] = None,
+    limit: int = 100,
+    user: dict = Depends(get_current_user),
+):
+    q = TelemetryQuery(machine_id=machine_id, start=start, end=end, limit=limit)
+    query, params = build_summary_query(
+    "telemetry_vibration",
+    ["Vib_axial", "Vib_base", "Vib_carc", "Vib_acpe", "Vib_acpi"],
+    q,
+)
+    pool = db.get_pool()
+    rows = await pool.fetch(query, *params)
+    return [dict(r) for r in rows]

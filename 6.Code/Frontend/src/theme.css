@@ -1,0 +1,94 @@
+/* ==========================================================================
+   SmartWatch Manager — Design Tokens
+   Industrial HMI aesthetic: steel-gray chrome, safety-yellow accent used
+   sparingly, monospace for every numeric readout. No rounded SaaS cards,
+   no dark-mode-with-one-accent, no generic sidebar layout.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* --- Color: steel / gunmetal / safety-yellow --- */
+  --color-surface: #EEF1F4;       /* page base, cool steel */
+  --color-panel: #F7F8FA;         /* raised panel surface, slightly lighter */
+  --color-border: #C7CDD4;        /* dividers, tile bezels */
+  --color-border-strong: #9AA3AD; /* emphasized borders */
+  --color-chrome: #3A4350;        /* top bar, panel headers */
+  --color-chrome-dark: #262D37;   /* deepest chrome, pressed states */
+  --color-ink: #1C2128;           /* primary text, near-black */
+  --color-ink-muted: #5B6470;     /* secondary text */
+  --color-accent: #FFC300;        /* safety yellow — selection/active ONLY */
+  --color-accent-ink: #1C2128;    /* text on accent */
+
+  /* --- Status trio (used consistently everywhere) --- */
+  --status-ok: #2E8B57;
+  --status-ok-bg: #E3F2E9;
+  --status-warn: #D98E04;
+  --status-warn-bg: #FCF0DA;
+  --status-fault: #C0392B;
+  --status-fault-bg: #FBE5E2;
+  --status-offline: #8A94A0;
+  --status-offline-bg: #E7E9EC;
+
+  /* --- Type --- */
+  --font-display: 'Oswald', sans-serif;      /* panel labels, headers — condensed/technical */
+  --font-body: 'Inter', sans-serif;          /* body copy, UI text */
+  --font-mono: 'IBM Plex Mono', monospace;   /* EVERY numeric telemetry readout */
+
+  /* --- Spacing scale --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* --- Chrome details --- */
+  --radius: 2px;             /* deliberately sharp, not rounded-SaaS */
+  --border-width: 1px;
+  --bezel-shadow: inset 0 0 0 1px var(--color-border), 0 1px 2px rgba(28,33,40,0.08);
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+/* Visible keyboard focus everywhere — quality floor, not optional */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

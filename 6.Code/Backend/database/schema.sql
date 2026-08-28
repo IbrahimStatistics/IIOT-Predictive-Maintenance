@@ -18,8 +18,9 @@ CREATE TABLE telemetry_current (
 SELECT create_hypertable('telemetry_current', 'time');
 
 -- ---------------------------------------------------------------------
--- Vibration telemetry — channels Vib_axial, Vib_base, Vib_carc, Vib_acpe, Vib_acpi
--- (real MAFAULDA dataset accelerometer channel names)
+-- Vibration telemetry — 5 MAFAULDA accelerometer channels
+-- (confirmed via \d telemetry_vibration — NOT the 3-axis Ax/Ay/Az
+-- originally assumed; that mismatch caused a live 500 error, fixed here)
 -- ---------------------------------------------------------------------
 CREATE TABLE telemetry_vibration (
     machine_id      TEXT NOT NULL,

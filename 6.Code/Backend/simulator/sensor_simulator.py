@@ -110,9 +110,13 @@ if __name__ == "__main__":
     parser.add_argument("--machine", default="motorA")
     parser.add_argument("--window-ms", type=float, default=1000)
     parser.add_argument("--speed", type=float, default=1.0)
+    parser.add_argument(
+        "--loop", action="store_true",
+        help="Repeat the recording continuously until Ctrl+C, instead of running once.",
+    )
     args = parser.parse_args()
 
-    run_simulator(
+    run_kwargs = dict(
         health_condition=args.health,
         torque_level=args.torque,
         device_id=args.device_id,
@@ -122,3 +126,13 @@ if __name__ == "__main__":
         window_duration_s=args.window_ms / 1000,
         speed=args.speed,
     )
+
+    if args.loop:
+        print("Looping continuously — press Ctrl+C to stop.")
+        try:
+            while True:
+                run_simulator(**run_kwargs)
+        except KeyboardInterrupt:
+            print("\nStopped.")
+    else:
+        run_simulator(**run_kwargs)
